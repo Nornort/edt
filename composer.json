@@ -1,0 +1,14 @@
+{
+    "name": "pl/phelma",
+    "description": "parse l'edt",
+    "require": {
+        "johngrogg/ics-parser": "^2.1",
+        "curl/curl": "^2.2"
+    },
+    "authors": [
+        {
+            "name": "pl",
+            "email": "52932209+plharraud@users.noreply.github.com"
+        }
+    ]
+}
