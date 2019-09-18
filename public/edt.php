@@ -61,7 +61,7 @@ $curl->get($edt_url);
 if (!$curl->error) {
     $ics = $curl->response;
 } else {
-    die($curl->error_message);
+    die("curl: ". $curl->error_message);
 }
 
 try {
