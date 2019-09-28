@@ -38,7 +38,8 @@ $english_groups = [
 if (   !isset($_GET)
     || !in_array(strtolower($_GET["filiere"]), ["pet", "pmp"])
     || !in_array(strtolower($_GET["classe"]), range("a", "e"))
-    || intval($_GET["lv1"]) > 20 || intval($_GET["lv1"]) < 1)
+    || intval($_GET["lv1"]) > 20 || intval($_GET["lv1"]) < 1
+    || intval($_GET["g"]) > 8    || intval($_GET["g"] < 1))
 {
     http_response_code(400);
     die();
@@ -47,6 +48,7 @@ if (   !isset($_GET)
 $filiere = strtolower($_GET["filiere"]);
 $classe = strtolower($_GET["classe"]);
 $lv1 = intval($_GET["lv1"]);
+$group = intval($_GET["g"]);
 
 // on choppe l'index 0 ou 1 (pet ou pmp) puis l'index de 0 à 4 (a à e)
 $edt_id = $classes[array_search($filiere, ["pet", "pmp"])][array_search($classe, range("a", "e"))];
@@ -68,7 +70,7 @@ try {
     $ical = new ICal($ics, /*['defaultTimeZone'=>'UTC']*/);
     //var_dump($ical->events());
 } catch (\Exception $e) {
-    die($e);
+    die("ical: ". $e);
 }
 
 function printevent($sum, $start, $end, $desc, $loc){
@@ -84,8 +86,8 @@ function printevent($sum, $start, $end, $desc, $loc){
     return $r;
 }
 
-//header("Content-type: text/calendar");
-header("Content-disposition: inline; filename=edt.ics");
+header("Content-type: text/calendar");
+header("Content-disposition: inline; filename=edt_{$filiere}{$classe}.ics");
 ?>
 BEGIN:VCALENDAR
 METHOD:REQUEST
@@ -96,8 +98,16 @@ CALSCALE:GREGORIAN
 
 foreach ($ical->events() as $e) {
     if (!preg_match("/English/", $e->summary)) {
-        echo printevent($e->summary, $e->dtstart, $e->dtend, $e->description, $e->location);
+        if (preg_match("/Math|Physique/", $e->summary)) { // c'est un cours de maths/physique
+            $regex = "/_G". $group ."$/m";
+            if (!preg_match($regex, $e->description)) { //ce n'est pas le bon groupe
+                continue;
+            }
+        }
+    } else { // c'est un cours d'anglais
+        continue;
     }
+    echo printevent($e->summary, $e->dtstart, $e->dtend, $e->description, $e->location);
 }
 
 $e = $english_groups[$lv1];
