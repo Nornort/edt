@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * TODO: Un cache ou au moins un "lasttime" de genre 15min pour pas se faire ban d'ADE
+ */
 require_once "../config.php";
 require_once '../vendor/autoload.php';
 
@@ -14,8 +16,8 @@ $classes = [
 ];
 
 $year = "2019";
-            //0       1     2        3       4       5       6       7       8
-$rooms = ["Z312", "Z313", "Z403", "Z404", "Z420", "Z510", "Z515", "Z517", "Z511"];
+            //0       1     2        3       4       5       6       7       8      9
+$rooms = ["Z312", "Z313", "Z403", "Z404", "Z420", "Z510", "Z515", "Z517", "Z511", "Z305"];
 $hours = ["10:15", "13:30", "16:00"]; //1-6: 0, 7-13: 1, 14-20: 2
 $dates = ["09/17","09/24","10/01","10/08","10/15","10/22","11/05","11/12","11/19","11/26","12/03","12/10","12/17"];
 $teachers = [
@@ -31,8 +33,28 @@ $teachers = [
 
 $english_groups = [
     // Prof, heure, salles
-    1 => [ "CO", 0,  [6, 1, 6, 3, 1, 6, 1, 6, 1, 6, 1, 6, 1]],
-    4 => [ "AM", 0, [2, 8, 2, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8]]
+    1 => [ "CO", 0, [6, 1, 6, 3, 1, 6, 1, 6, 1, 6, 1, 6, 1]],
+    2 => [ "HC", 0, [5, 0, 5, 9, 0, 5, 0, 5, 0, 5, 0, 5, 0]],
+    3 => [ "LA", 0, []],
+    4 => [ "AM", 0, [2, 8, 2, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8]],
+    5 => [ "VB", 0, []],
+    6 => [ "GL", 0, []],
+
+    7 => [ "CO", 1, []],
+    8 => [ "HC", 1, []],
+    9 => [ "NL", 1, []],
+    10 => [ "AM", 1, []],
+    11 => [ "RC", 1, []],
+    12 => [ "VB", 1, []],
+    13 => [ "GL", 1, []],
+
+    14 => [ "CO", 2, []],
+    15 => [ "HC", 2, []],
+    16 => [ "NL", 2, []],
+    17 => [ "AM", 2, []],
+    18 => [ "RC", 2, []],
+    19 => [ "VB", 2, []],
+    20 => [ "GL", 2, []],
 ];
 
 if (   !isset($_GET)
@@ -40,8 +62,11 @@ if (   !isset($_GET)
     || !in_array(strtolower($_GET["classe"]), range("a", "e"))
     || intval($_GET["lv1"]) > 20 || intval($_GET["lv1"]) < 1
     || intval($_GET["g"]) > 8    || intval($_GET["g"] < 1))
+    // il y'a aussi $_GET["eps"] mais il est optionnel
 {
     http_response_code(400);
+    echo "400 bad request\n";
+    print_r($_GET);
     die();
 }
 
@@ -85,9 +110,9 @@ function printevent($sum, $start, $end, $desc, $loc){
     $r .= "END:VEVENT\n";
     return $r;
 }
-
+/*
 header("Content-type: text/calendar");
-header("Content-disposition: inline; filename=edt_{$filiere}{$classe}.ics");
+header("Content-disposition: inline; filename=edt_{$filiere}{$classe}.ics");*/
 ?>
 BEGIN:VCALENDAR
 METHOD:REQUEST
@@ -97,14 +122,16 @@ CALSCALE:GREGORIAN
 <?
 
 foreach ($ical->events() as $e) {
-    if (!preg_match("/English/", $e->summary)) {
-        if (preg_match("/Math|Physique/", $e->summary)) { // c'est un cours de maths/physique
-            $regex = "/_G". $group ."$/m";
-            if (!preg_match($regex, $e->description)) { //ce n'est pas le bon groupe
-                continue;
-            }
+    if (preg_match("/English/", $e->summary)) { // c'est un cours d'anglais, on le skip
+        continue;
+    }
+    if (preg_match("/Math|Physique/", $e->summary)) { // c'est un cours de maths/physique
+        $regex = "/_G". $group ."$/m";
+        if (!preg_match($regex, $e->description)) { //ce n'est pas le bon groupe : on skip
+            continue;
         }
-    } else { // c'est un cours d'anglais
+    }
+    if (preg_match("/Sportive/", $e->summary) && !isset($_GET["eps"])) { // on skip les cours d'eps par defaut
         continue;
     }
     echo printevent($e->summary, $e->dtstart, $e->dtend, $e->description, $e->location);
@@ -113,6 +140,8 @@ foreach ($ical->events() as $e) {
 $e = $english_groups[$lv1];
 foreach ($e[2] as $k => $v) {
     $datestring = "{$year}/{$dates[$k]}  {$hours[$e[1]]} Europe/Paris";
+    if (strtotime($datestring) < time()) // skip les cours passés
+        continue;
     $start = date("Ymd\THis\Z", strtotime($datestring));
     $end   = date("Ymd\THis\Z", strtotime($datestring . " + 2 hours"));
     //echo $start ." - ". $end ." - ". $rooms[$v] ." - ". $teachers[$e[0]] ."<br>";
