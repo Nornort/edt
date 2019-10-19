@@ -82,7 +82,7 @@ table {
     </tr>
 
     <tr>
-        <td colspan="2"><br>Marre de voir les cours d'anglais, de maths, de physique et de sport de tout le monde dans ton edt ?
+        <td colspan="2"><hr>Marre de voir les cours d'anglais, de maths, de physique et de sport de tout le monde dans ton edt ?
             marre de devoir chercher la salle sur tous ces evenements ? alors il est temps de changer d'EDT. <br><br>
         </td>
     </tr>
@@ -94,14 +94,24 @@ table {
     </tr>
 
     <tr>
-        <td colspan="2">Garder un EDT original d'ADE peut etre une bonne idée, on est pas a l'abri d'une panne, d'un oubli ou d'une erreur de ma part. <br>
+        <td colspan="2">Garder un EDT original d'ADE peut etre une bonne idée, je ne suis pas a l'abri d'une panne, ou d'une erreur. <br>
             <span style="font-size: 10px; font-style: oblique;">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND</span>
         </td>
     </tr>
 
     <tr>
-        <td>Un bug, une réclam, ou autre :</td>
-        <td><a href="https://m.me/plharraud" target="blank"><img src="pl.jpg" alt="messenger" style="width:120px"></a></td>
+        <td colspan="2">Un bug, une réclam, ou autre :
+            <a href="https://m.me/plharraud" target="blank">
+                <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDEyOCAxMjgiIGlkPSJTb2NpYWxfSWNvbnMiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDEyOCAxMjgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxnIGlkPSJfeDM0X19zdHJva2UiPjxnIGlkPSJGYWNlYm9va19NZXNzZW5nZXJfMV8iPjxyZWN0IGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBoZWlnaHQ9IjEyOCIgd2lkdGg9IjEyOCIvPjxwYXRoIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTcwLjM2LDc5LjgwMkw1NC4wNjIsNjIuNDIgICAgTDIyLjI2MSw3OS44MDJsMzQuOTgxLTM3LjEzNmwxNi42OTYsMTcuMzgzbDMxLjQwNC0xNy4zODNMNzAuMzYsNzkuODAyeiBNNjQsMEMyOC42NTQsMCwwLDI2LjUzMSwwLDU5LjI1OSAgICBjMCwxOC42NDksOS4zMDcsMzUuMjgzLDIzLjg1MSw0Ni4xNDZWMTI4bDIxLjc5MS0xMS45NmM1LjgxNiwxLjYwOSwxMS45NzcsMi40NzgsMTguMzU4LDIuNDc4YzM1LjM0NiwwLDY0LTI2LjUzMSw2NC01OS4yNTkgICAgUzk5LjM0NiwwLDY0LDB6IiBmaWxsPSIjMDA3RkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGlkPSJGYWNlYm9va19NZXNzZW5nZXIiLz48L2c+PC9nPjwvc3ZnPg==" alt="messenger" style="width:20px">
+            </a>
+        </td>
+    </tr>
+
+    <tr>
+        <td style="text-align: center;" colspan="2">
+            Avant/après <br>
+            <img src="ba.png" alt="avant/après" style="margin:auto;width:500px">
+        </td>
     </tr>
 </table>
 
