@@ -1,14 +1,14 @@
 <?php
-/**
- * TODO: Un cache ou au moins un "lasttime" de genre 15min pour pas se faire ban d'ADE
- */
 require_once "../config.php";
 require_once '../vendor/autoload.php';
 
-date_default_timezone_set("UTC");
+date_default_timezone_set("UTC"); //google calendar gere l'heure d'été
 
 use Curl\Curl;
 use ICal\ICal;
+
+$cache_path = "../cache/";
+$cache_time = 20; //minutes
 
 $classes = [
     [20866, 20870, 20869, 20868, 20867],//pet de A à E
@@ -18,7 +18,7 @@ $classes = [
 $year = "2019";
             //0       1     2        3       4       5       6       7       8      9
 $rooms = ["Z312", "Z313", "Z403", "Z404", "Z420", "Z510", "Z515", "Z517", "Z511", "Z305"];
-$hours = ["10:15", "13:30", "16:00"]; //1-6: 0, 7-13: 1, 14-20: 2
+$hours = ["10:30", "13:30", "16:00"]; //1-6: 0, 7-13: 1, 14-20: 2
 $dates = ["09/17","09/24","10/01","10/08","10/15","10/22","11/05","11/12","11/19","11/26","12/03","12/10","12/17"];
 $teachers = [
     "CO" => "Catharine Owen",
@@ -75,21 +75,40 @@ $classe = strtolower($_GET["classe"]);
 $lv1 = intval($_GET["lv1"]);
 $group = intval($_GET["g"]);
 
+function CurlURL($url) {
+    $curl = new Curl();
+    global $edt_user, $edt_pass;
+    $curl->setBasicAuthentication($edt_user, $edt_pass);
+    $curl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
+    $curl->get($url);
+
+    if (!$curl->error) {
+        return $curl->response;
+    } else {
+        die("curl: ". $curl->error_message);
+    }
+}
+
+function getEDT($id) {
+    global $cache_path, $cache_time;
+    $file = $cache_path . $id . ".ics";
+    $url = "https://edt.grenoble-inp.fr/directCal/2019-2020/phelma/etudiant/jsp/custom/modules/plannings/direct_cal.jsp?resources=";
+    $url .= $id;
+
+    if (file_exists($file) && filemtime($file) > (time() - 60 * $cache_time)) { //moins de $cache_time minutes
+        //echo "from cache";
+        return file_get_contents($file);
+    } else { //plus -> on refresh le cache et on return
+        //echo "refreshed";
+        $ics = CurlURL($url);
+        file_put_contents($file, $ics, LOCK_EX);
+        return $ics;
+    }
+}
+
 // on choppe l'index 0 ou 1 (pet ou pmp) puis l'index de 0 à 4 (a à e)
 $edt_id = $classes[array_search($filiere, ["pet", "pmp"])][array_search($classe, range("a", "e"))];
-$edt_url = "https://edt.grenoble-inp.fr/directCal/2019-2020/phelma/etudiant/jsp/custom/modules/plannings/direct_cal.jsp?resources={$edt_id}";
-
-
-$curl = new Curl();
-$curl->setBasicAuthentication($edt_user, $edt_pass);
-$curl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
-$curl->get($edt_url);
-
-if (!$curl->error) {
-    $ics = $curl->response;
-} else {
-    die("curl: ". $curl->error_message);
-}
+$ics = getEDT($edt_id);
 
 try {
     $ical = new ICal($ics, /*['defaultTimeZone'=>'UTC']*/);
@@ -111,6 +130,7 @@ function printevent($sum, $start, $end, $desc, $loc){
     return $r;
 }
 /*
+TODO: UNCOMMENT
 header("Content-type: text/calendar");
 header("Content-disposition: inline; filename=edt_{$filiere}{$classe}.ics");*/
 ?>

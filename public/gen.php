@@ -37,17 +37,17 @@ table {
         <td>
             <? foreach (range("a", "e") as $v) {
                 echo "<label for=\"{$v}\"><input type=\"radio\" name=\"classe\" value=\"{$v}\" id=\"{$v}\"> ". strtoupper($v) ."</label>\n";
-            }?>
+            } ?>
         </td>
     </tr>
 
     <tr>
         <td>
-            <label for="lvg1"> Groupe de maths :
+            <label for="g"> Groupe de maths :
             </label>
         </td>
         <td>
-            <select name="g" id="lv1">
+            <select name="g" id="g">
                 <option value="">--</option>
             <? for ($i=1; $i <= 8; $i++) {
                         echo "<option value=\"{$i}\">{$i}</option>\n";
@@ -88,8 +88,20 @@ table {
     </tr>
 
     <tr>
+        <td colspan="2">Une intervalle de synchro d'1 heure semble largement suffisante<br>
+            Il y'a un cache interne de 20min (Je veux pas me faire bannir d'ADE)
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">Garder un EDT original d'ADE peut etre une bonne idée, on est pas a l'abri d'une panne, d'un oubli ou d'une erreur de ma part. <br>
+            <span style="font-size: 10px; font-style: oblique;">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND</span>
+        </td>
+    </tr>
+
+    <tr>
         <td>Un bug, une réclam, ou autre :</td>
-        <td><a href="https://m.me/plharraud"><img src="pl.jpg" alt="messenger" style="width:120px"></a></td>
+        <td><a href="https://m.me/plharraud" target="blank"><img src="pl.jpg" alt="messenger" style="width:120px"></a></td>
     </tr>
 </table>
 
