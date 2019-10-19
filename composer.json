@@ -1,6 +1,7 @@
 {
     "name": "pl/edt",
     "description": "parse l'edt",
+    "license": "MIT",
     "require": {
         "johngrogg/ics-parser": "^2.1",
         "curl/curl": "^2.2"
