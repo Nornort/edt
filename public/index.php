@@ -12,7 +12,7 @@ table {
 <form action="">
 
 <table>
-    <tr><td colspan="2" style="text-align: center"> <h3>EDT perso 1A</h3></td></tr>
+    <tr><td colspan="2" style="text-align: center"><h3>EDT perso 1A</h3></td></tr>
 
     <tr>
         <td colspan="2">
@@ -43,8 +43,7 @@ table {
 
     <tr>
         <td>
-            <label for="g"> Groupe de maths :
-            </label>
+            <label for="g"> Groupe de maths :</label>
         </td>
         <td>
             <select name="g" id="g">
@@ -58,8 +57,7 @@ table {
 
     <tr>
         <td>
-            <label for="lv1"> Groupe d'anglais :
-            </label>
+            <label for="lv1"> Groupe d'anglais :</label>
         </td>
         <td>
             <select name="lv1" id="lv1">
@@ -73,11 +71,16 @@ table {
 
     <tr>
         <td>
-            <label for="eps">Afficher l'EPS :
-            </label>
+            <label for="eps">Groupe d'EPS :</label>
         </td>
         <td>
-            <input type="checkbox" name="eps" id="eps">
+            <select name="eps" id="eps">
+                <option value="">--</option>
+                <option value="0">Cacher</option>
+                <option value="1">10h15</option>
+                <option value="2">13h30</option>
+                <option value="3">15h45</option>
+            </select>
         </td>
     </tr>
 
@@ -128,25 +131,13 @@ document.addEventListener("submit", e => {
 })
 
 document.addEventListener("change", e => {
-    //console.log(e)
-
-    if(e.target.type == "checkbox") {
-        if (!e.target.checked) {
-            delete options[e.target.name]
-        } else {
-            options[e.target.name] = 1
-        }
-    } else {
-        options[e.target.name] = e.target.value
-    }
+    options[e.target.name] = e.target.value
 
     params = ""
     for (let k in options) {
         params += encodeURIComponent(k) + "=" + encodeURIComponent(options[k]) + "&"
     }
     url.value = "https://edt.harraud.fr/edt?" + params.slice(0, -1)
-
-    //console.log(options)
 })
 
 new ClipboardJS('.copy');

@@ -7,62 +7,12 @@ date_default_timezone_set("UTC"); //google calendar gere l'heure d'été
 use Curl\Curl;
 use ICal\ICal;
 
-$cache_path = "../cache/";
-$cache_time = 20; //minutes
-
-$classes = [
-    [20866, 20870, 20869, 20868, 20867],//pet de A à E
-    [20871, 20875, 20874, 20873, 20872] //pmp
-];
-
-$year = "2019";
-            //0       1     2        3       4       5       6       7       8      9      10
-$rooms = ["Z312", "Z313", "Z403", "Z404", "Z420", "Z510", "Z515", "Z517", "Z511", "Z305", "Z511 (Z403)"];
-$hours = ["10:30", "13:30", "16:00"]; //1-6: 0, 7-13: 1, 14-20: 2
-$dates = ["09/17","09/24","10/01","10/08","10/15","10/22","11/05","11/12","11/19","11/26","12/03","12/10","12/17"];
-$teachers = [
-    "CO" => "Catharine Owen",
-    "GL" => "Guy Little",
-    "HC" => "Helen Chuzel",
-    "LA" => "Lauren Ayotte",
-    "AM" => "Annielle Mayousse",
-    "NL" => "Naomi Lee",
-    "VB" => "Véronique Béguin",
-    "RC" => "Rosie Cox"
-];
-
-$english_groups = [
-    // Prof, heure, salles
-    1 =>  [ "CO", 0, [6, 1, 6, 3, 1, 6, 1, 6, 1, 6, 1, 6, 1]],
-    2 =>  [ "HC", 0, [5, 0, 5, 9, 0, 5, 0, 5, 0, 5, 0, 5, 0]],
-    3 =>  [ "LA", 0, [0, 0, 0, 0, 0, 7, 4, 7, 4, 7, 4, 7, 4]],
-    4 =>  [ "AM", 0, [2, 8, 2, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8]],
-    5 =>  [ "VB", 0, [0, 0, 0, 0, 0, 0, 7, 0, 7, 0, 7, 0, 7]],
-    6 =>  [ "GL", 0, [0, 0, 0, 0, 0, 1, 5, 1, 5, 1, 5, 1, 5]],
- 
-    7 =>  [ "CO", 1, [0, 0, 0, 0, 0, 6, 1, 6, 1, 6, 1, 6, 1]],
-    8 =>  [ "HC", 1, [0, 0, 0, 0, 0, 5, 0, 5, 0, 5, 0, 5, 0]],
-    9 =>  [ "NL", 1, [0, 0, 0, 0, 0, 7, 4, 7, 4, 7, 4, 7, 4]],
-    10 => [ "AM", 1, [0, 0, 0, 0, 0, 2, 8, 2, 8, 2, 8, 2, 8]],
-    11 => [ "RC", 1, [0, 0, 0, 0, 0, 4, 6, 4, 6, 4, 6, 4, 6]],
-    12 => [ "VB", 1, [0, 0, 0, 0, 0, 0, 7, 0, 7, 0, 7, 0, 7]],
-    13 => [ "GL", 1, [0, 0, 0, 0, 0, 1, 5, 1, 5, 1, 5, 1, 5]],
-
-    14 => [ "CO", 2, [0, 0, 0, 0, 0, 6, 1, 6, 1, 6, 1, 6, 1]],
-    15 => [ "HC", 2, [0, 0, 0, 0, 0, 5, 0, 5, 0, 5, 0, 5, 0]],
-    16 => [ "NL", 2, [0, 0, 0, 0, 0, 7, 4, 7, 4, 7, 4, 7, 4]],
-    17 => [ "AM", 2, [0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10, 10, 10]],
-    18 => [ "RC", 2, [0, 0, 0, 0, 0, 4, 6, 4, 6, 4, 6, 4, 6]],
-    19 => [ "VB", 2, [0, 0, 0, 0, 0, 0, 7, 0, 7, 0, 7, 0, 7]],
-    20 => [ "GL", 2, [0, 0, 0, 0, 0, 1, 5, 1, 5, 1, 5, 1, 5]],
-];
-
 if (   !isset($_GET)
     || !in_array(strtolower($_GET["filiere"]), ["pet", "pmp"])
     || !in_array(strtolower($_GET["classe"]), range("a", "e"))
-    || intval($_GET["lv1"]) > 20 || intval($_GET["lv1"]) < 1
-    || intval($_GET["g"]) > 8    || intval($_GET["g"] < 1))
-    // il y'a aussi $_GET["eps"] mais il est optionnel
+    || intval($_GET["lv1"]) > $nb_groupes_lv1 || intval($_GET["lv1"]) < 1
+    || intval($_GET["g"]) > $nb_groupes_maths || intval($_GET["g"] < 1)
+    || intval($_GET["eps"]) > $nb_groupes_eps || intval($_GET["eps"] < 1))
 {
     http_response_code(400);
     echo "400 bad request\n";
@@ -71,9 +21,23 @@ if (   !isset($_GET)
 }
 
 $filiere = strtolower($_GET["filiere"]);
-$classe = strtolower($_GET["classe"]);
-$lv1 = intval($_GET["lv1"]);
-$group = intval($_GET["g"]);
+$classe =  strtolower($_GET["classe"]);
+$group_lv1 =   intval($_GET["lv1"]);
+$group_maths = intval($_GET["g"]);
+$group_eps =   intval($_GET["eps"]);
+
+function printevent($sum, $start, $end, $desc, $loc){
+    $r =  "BEGIN:VEVENT\n";
+    $r .= "SUMMARY:".  $sum  ."\n";
+    $r .= "DTSTART:".  $start."\n";
+    $r .= "DTEND:".    $end  ."\n";
+    if (!empty($desc)) {
+        $r .= "DESCRIPTION:". $desc ."\n";
+    }
+    $r .= "LOCATION:". $loc  ."\n";
+    $r .= "END:VEVENT\n";
+    return $r;
+}
 
 function CurlURL($url) {
     $curl = new Curl();
@@ -92,14 +56,11 @@ function CurlURL($url) {
 function getEDT($id) {
     global $cache_path, $cache_time;
     $file = $cache_path . $id . ".ics";
-    $url = "https://edt.grenoble-inp.fr/directCal/2019-2020/phelma/etudiant/jsp/custom/modules/plannings/direct_cal.jsp?resources=";
-    $url .= $id;
+    $url = 'https://edt.grenoble-inp.fr/directCal/2019-2020/phelma/etudiant/jsp/custom/modules/plannings/direct_cal.jsp?resources='. $id;
 
     if (file_exists($file) && filemtime($file) > (time() - 60 * $cache_time)) { //moins de $cache_time minutes
-        //echo "from cache";
         return file_get_contents($file);
     } else { //plus -> on refresh le cache et on return
-        //echo "refreshed";
         $ics = CurlURL($url);
         file_put_contents($file, $ics, LOCK_EX);
         return $ics;
@@ -117,19 +78,6 @@ try {
     die("ical: ". $e);
 }
 
-function printevent($sum, $start, $end, $desc, $loc){
-    $r =  "BEGIN:VEVENT\n";
-    $r .= "SUMMARY:".     $sum  ."\n";
-    $r .= "DTSTART:".     $start."\n";
-    $r .= "DTEND:".       $end  ."\n";
-    if (!empty($desc)) {
-        $r .= "DESCRIPTION:". $desc ."\n";
-    }
-    $r .= "LOCATION:".    $loc  ."\n";
-    $r .= "END:VEVENT\n";
-    return $r;
-}
-
 if (!isset($_GET["test"])) {
     header("Content-type: text/calendar");
     header("Content-disposition: inline; filename=edt_{$filiere}{$classe}.ics");
@@ -140,34 +88,20 @@ METHOD:REQUEST
 PRODID:-//edt.harraud.fr//Parser ADE 1A//FR
 VERSION:2.0
 CALSCALE:GREGORIAN
-<?
+<?php
+$reg_lv1 = '/_G'. $group_lv1 .'$/m';
+$reg_maths = '/_G'. $group_maths .'$/m';
+$reg_eps = '/_G'. $group_eps .'$/m';
 
 foreach ($ical->events() as $e) {
-    if (preg_match("/English/", $e->summary)) { // c'est un cours d'anglais, on le skip
+
+    if (   (preg_match("/English/", $e->summary)       && !preg_match($reg_lv1,   $e->description))
+        || (preg_match("/Math|Physique/", $e->summary) && !preg_match($reg_maths, $e->description))
+        || (preg_match("/Sportive/", $e->summary)      && !preg_match($reg_eps,   $e->description))
+        || $group_eps == 0)
         continue;
-    }
-    if (preg_match("/Math|Physique/", $e->summary)) { // c'est un cours de maths/physique
-        $regex = "/_G". $group ."$/m";
-        if (!preg_match($regex, $e->description)) { //ce n'est pas le bon groupe : on skip
-            continue;
-        }
-    }
-    if (preg_match("/Sportive/", $e->summary) && !isset($_GET["eps"])) { // on skip les cours d'eps par defaut
-        continue;
-    }
+
     echo printevent($e->summary, $e->dtstart, $e->dtend, $e->description, $e->location);
 }
-
-$e = $english_groups[$lv1];
-foreach ($e[2] as $k => $v) {
-    $datestring = "{$year}/{$dates[$k]}  {$hours[$e[1]]} Europe/Paris";
-    if (strtotime($datestring) < time()) // skip les cours passés
-        continue;
-    $start = date("Ymd\THis\Z", strtotime($datestring));
-    $end   = date("Ymd\THis\Z", strtotime($datestring . " + 2 hours"));
-    //echo $start ." - ". $end ." - ". $rooms[$v] ." - ". $teachers[$e[0]] ."<br>";
-    echo printevent("English PET-PMP S5", $start, $end, $teachers[$e[0]], $rooms[$v]);
-}
-
 ?>
 END:VCALENDAR
