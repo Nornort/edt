@@ -97,8 +97,8 @@ foreach ($ical->events() as $e) {
 
     if (   (preg_match("/English/", $e->summary)       && !preg_match($reg_lv1,   $e->description))
         || (preg_match("/Math|Physique/", $e->summary) && !preg_match($reg_maths, $e->description))
-        || (preg_match("/Sportive/", $e->summary)      && !preg_match($reg_eps,   $e->description))
-        || $group_eps == 0)
+        || (preg_match("/Sportive/", $e->summary)      && (!preg_match($reg_eps,   $e->description) || $group_eps == 0))
+    )
         continue;
 
     echo printevent($e->summary, $e->dtstart, $e->dtend, $e->description, $e->location);
