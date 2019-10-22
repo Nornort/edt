@@ -12,7 +12,7 @@ if (   !isset($_GET)
     || !in_array(strtolower($_GET["classe"]), range("a", "e"))
     || intval($_GET["lv1"]) > $nb_groupes_lv1 || intval($_GET["lv1"]) < 1
     || intval($_GET["g"]) > $nb_groupes_maths || intval($_GET["g"] < 1)
-    || intval($_GET["eps"]) > $nb_groupes_eps || intval($_GET["eps"] < 1))
+    || intval($_GET["eps"]) > $nb_groupes_eps || intval($_GET["eps"] < 0))
 {
     http_response_code(400);
     echo "400 bad request\n";
