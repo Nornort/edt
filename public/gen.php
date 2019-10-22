@@ -117,7 +117,7 @@ table {
 </form>
 
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-150664246-1"></script>
 <script>
 form = document.getElementsByTagName("form")[0];
 url = document.getElementById("url");
@@ -148,5 +148,8 @@ document.addEventListener("change", e => {
 
     //console.log(options)
 })
+
 new ClipboardJS('.copy');
+
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-150664246-1');
 </script>
