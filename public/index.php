@@ -124,21 +124,21 @@ table {
 <script>
 form = document.getElementsByTagName("form")[0];
 url = document.getElementById("url");
-options = {}
+options = {};
 
 document.addEventListener("submit", e => {
     e.preventDefault();
-})
+});
 
 document.addEventListener("change", e => {
-    options[e.target.name] = e.target.value
+    options[e.target.name] = e.target.value;
 
-    params = ""
+    let params = "";
     for (let k in options) {
         params += encodeURIComponent(k) + "=" + encodeURIComponent(options[k]) + "&"
     }
-    url.value = window.location.href + "/edt?" + params.slice(0, -1)
-})
+    url.value = window.location.href + "edt?" + params.slice(0, -1)
+});
 
 new ClipboardJS('.copy');
 
