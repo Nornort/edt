@@ -35,7 +35,7 @@ table {
             Classe :
         </td>
         <td>
-            <? foreach (range("a", "e") as $v) {
+            <?php foreach (range("a", "e") as $v) {
                 echo "<label for=\"{$v}\"><input type=\"radio\" name=\"classe\" value=\"{$v}\" id=\"{$v}\"> ". strtoupper($v) ."</label>\n";
             } ?>
         </td>
@@ -48,7 +48,7 @@ table {
         <td>
             <select name="g" id="g">
                 <option value="">--</option>
-            <? for ($i=1; $i <= 8; $i++) {
+            <?php for ($i=1; $i <= 8; $i++) {
                         echo "<option value=\"{$i}\">{$i}</option>\n";
             } ?>
             </select>
@@ -62,7 +62,7 @@ table {
         <td>
             <select name="lv1" id="lv1">
                 <option value="">--</option>
-            <? for ($i=1; $i <= 20; $i++) {
+            <?php for ($i=1; $i <= 20; $i++) {
                         echo "<option value=\"{$i}\">{$i}</option>\n";
             } ?>
             </select>
@@ -137,7 +137,7 @@ document.addEventListener("change", e => {
     for (let k in options) {
         params += encodeURIComponent(k) + "=" + encodeURIComponent(options[k]) + "&"
     }
-    url.value = "https://edt.harraud.fr/edt?" + params.slice(0, -1)
+    url.value = window.location.href + "/edt?" + params.slice(0, -1)
 })
 
 new ClipboardJS('.copy');
